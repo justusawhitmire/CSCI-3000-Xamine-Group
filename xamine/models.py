@@ -23,7 +23,10 @@ class AppSetting(models.Model):
 
     @staticmethod
     def get_setting(name):
-        return AppSetting.objects.get(name=name).value
+        try:
+            return AppSetting.objects.get(name=name).value
+        except AppSetting.DoesNotExist: 
+            return False
 
     def __str__(self):
         return self.name
