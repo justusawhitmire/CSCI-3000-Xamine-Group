@@ -7,6 +7,7 @@ from django.utils.html import strip_tags
 from xamine.models import Order, AppSetting
 
 
+
 def send_email(to_email, from_email, subject, html_content):
     """ Defines how to send generic email"""
 
@@ -26,6 +27,50 @@ def send_email(to_email, from_email, subject, html_content):
     # Send the email
     msg.send()
     return
+
+"""@background(schedule= remnd == now)
+def send_reminder(Order):
+    import smtplib
+    from email.mime.text import MIMEText
+    from socket import gaierror
+    ord = Order.objects.get(pk=order_id)
+
+    # now you can play with your code. Let’s define the SMTP server separately here:
+    port = 587 
+    smtp_server = "smtp.gmail.com"
+    login = "xamineinc@gmail.com" 
+    password = os.environ.get('EMAIL_PASS')
+
+    # specify the sender’s and receiver’s email addresses
+    sender = "xamineinc@gmail.com"
+    receiver = ord.patient.email_info
+
+    # type your message: use two newlines (\n) to separate the subject from the message body, and use 'f' to  automatically insert variables in the text
+    message = f"""\
+    """Subject: Hello Xamine Patient
+    To: {receiver}
+    From: {sender}
+
+    You are scheduled for an appointment on {appt}
+
+    See you then!
+
+    Xamine Group"""""""
+
+    try:
+        #send your message with credentials specified above
+        with smtplib.SMTP(smtp_server, port) as server:
+            server.login(login, password)
+            server.sendmail(sender, receiver, message)
+
+        # tell the script to report if your message was sent or which errors need to be fixed 
+        print('Sent')
+    except (gaierror, ConnectionRefusedError):
+        print('Failed to connect to the server. Bad connection settings?')
+    except smtplib.SMTPServerDisconnected:
+        print('Failed to connect to the server. Wrong user/password?')
+    except smtplib.SMTPException as e:
+        print('SMTP error occurred: ' + str(e))"""
 
 
 @background(schedule=5)
