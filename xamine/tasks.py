@@ -6,6 +6,13 @@ from django.utils.html import strip_tags
 
 from xamine.models import Order, AppSetting
 
+import smtplib
+
+from background_task import background
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+
+
 
 def send_email(to_email, from_email, subject, html_content):
     """ Defines how to send generic email"""
@@ -26,7 +33,6 @@ def send_email(to_email, from_email, subject, html_content):
     # Send the email
     msg.send()
     return
-
 
 @background(schedule=5)
 def send_notification(order_id):

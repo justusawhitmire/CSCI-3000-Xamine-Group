@@ -4,6 +4,10 @@ from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
+from django.core.mail import send_mail
+from django.conf import settings
+from django.template.loader import render_to_string
+
 
 from xamine.models import Order, Patient, Image, OrderKey
 from xamine.forms import ImageUploadForm
@@ -11,7 +15,7 @@ from xamine.forms import NewOrderForm, PatientLookupForm
 from xamine.forms import PatientInfoForm, ScheduleForm, TeamSelectionForm, AnalysisForm
 from xamine.utils import is_in_group, get_image_files
 from xamine.tasks import send_notification
-
+from xamineapp import settings
 
 @login_required
 def index(request):
@@ -273,7 +277,6 @@ def patient(request, pat_id=None):
     }
     return render(request, 'patient.html', context)
 
-
 @login_required
 def schedule_order(request, order_id):
     """ Schedules our appointment if available """
@@ -283,41 +286,103 @@ def schedule_order(request, order_id):
 
         # Grab our requested order from the DB
         order = Order.objects.get(pk=order_id)
-
+        
         # If we have an appointment key in our post data, check if there are appointments within two hours.
         if request.POST['appointment']:
             appt = datetime.datetime.strptime(request.POST['appointment'], '%m/%d/%Y %I:%M %p')
             twohrslater = appt + datetime.timedelta(hours=2)
+            """establishes the current time to be compared for appointments and reminders"""
+            now = datetime.datetime.now()
 
-            if appt.date() < datetime.date.today():
+            
+            """Bug fix below(completed 11/9/20)"""
+            """blocks the ability to schedule an appointment prior to the current time"""
+            if appt < now:
                 messages = {
                     'headline1': 'Appointment is in the past.',
                     'headline2': '',
-                    'headline3': f"Orders can only be assigned to today or in the future."
+                    'headline3': f"Orders can only be assigned later today or in the future."
                 }
                 return show_message(request, messages)
-
+        
             conflict = Order.objects.filter(appointment__gte=appt, appointment__lt=twohrslater).exists()
         else:
             # We did not get an appointment key in our POST data, so we're going to blank out our appt time.
             appt = None
             conflict = False
 
+        """ reminder scheduling method (completed 11/9/20) """
+        if request.POST['reminder']:
+            remnd = datetime.datetime.strptime(request.POST['reminder'], '%m/%d/%Y %I:%M %p')
+            
+            if appt.date() < remnd.date():
+                messages = {
+                    'headline1': 'Reminder is after the appointment.',
+                    'headline2': '',
+                    'headline3': f"Reminders must be scheduled before the appointment."    
+                }
+                return show_message(request, messages)
+
+            if remnd < now:
+                messages = {
+                    'headline1': 'Reminder is in the past.',
+                    'headline2': '',
+                    'headline3': f"Reminder can only be assigned later today or in the future."
+                }
+                return show_message(request, messages)
+            
+            if remnd.date() == appt.date():
+
+                if appt.time() < remnd.time():
+                    messages = {
+                        'headline1': 'Reminder is at the same time or after the appointment.',
+                        'headline2': '',
+                        'headline3': f"Reminders must be scheduled before the appointment."    
+                    }
+                    return show_message(request, messages)
+        else:
+            remnd = None
+            appt = None
+            conflict = None
+
         # If there is a conflict, show an error. Otherwise, save our appt info.
         if conflict:
             messages = {
-                'headline1': 'Appointment conflict',
-                'headline2': 'Please try again.',
-                'headline3': f""
+                    'headline1': 'Appointment conflict',
+                    'headline2': 'Please try again.',
+                    'headline3': f""
             }
             return show_message(request, messages)
         else:
             order.appointment = appt
+            """saves the set time for the reminder"""
+            order.reminder = remnd
             order.save()
-
+            """displays the success messages once you have successfully scheduled an appointment and a reminder"""
+            return schedule_success(request)
     # Alwyas redirect to the order
     return redirect('order', order_id=order_id)
 
+
+""" Shows a success page when appointment and reminder are successfully scheduled"""
+""" Sends reminder email(work in progress) """
+def schedule_success(request, pat_id=None):
+    context={}
+    if request.method == 'POST':
+        pat_form = PatientInfoForm(data=request.POST)
+        if pat_form.is_valid():
+            pat_email = (pat_form.cleaned_data["email_info"])
+            send_mail(
+                subject = 'Your upcoming appointment with Xamine group',
+                message = 'You have an upcoming appointment scheduled with the Xamine RIS group.',
+                from_email = 'thetesttester3@gmail.com',
+                recipient_list = [pat_email],
+                fail_silently=False
+            )
+            #send_mail(subject, message, from_email, recipient_list)
+    return render(request, "success_message.html", context)
+    
+    
 
 @login_required
 def patient_lookup(request):

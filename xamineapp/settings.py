@@ -154,8 +154,8 @@ EMAIL_HOST = "smtp.gmail.com"
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
 EMAIL_PORT = 587
-EMAIL_HOST_USER = "xamineinc@gmail.com"
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASS')
+EMAIL_HOST_USER = "thetesttester3@gmail.com"
+EMAIL_HOST_PASSWORD = "CSCI3300"
 
 # Check prodsettings.py to see how to enable emails
 
