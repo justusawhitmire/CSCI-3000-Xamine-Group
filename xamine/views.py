@@ -366,13 +366,11 @@ def schedule_order(request, order_id):
 
 """ Shows a success page when appointment and reminder are successfully scheduled"""
 """ Sends reminder email(work in progress) """
-def schedule_success(request):
+def schedule_success(request, pat_id=None):
     context={}
     if request.method == 'POST':
-        pat_form = PatientInfoForm(request.POST)
+        pat_form = PatientInfoForm(data=request.POST)
         if pat_form.is_valid():
-            print(pat_form)
-            print(pat_form.cleaned_data)
             pat_email = (pat_form.cleaned_data["email_info"])
             send_mail(
                 subject = 'Your upcoming appointment with Xamine group',
@@ -385,12 +383,6 @@ def schedule_success(request):
     return render(request, "success_message.html", context)
     
     
-    
-    
-
-
-   
-
 
 @login_required
 def patient_lookup(request):

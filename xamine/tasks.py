@@ -33,31 +33,6 @@ def send_email(to_email, from_email, subject, html_content):
     # Send the email
     msg.send()
     return
-"""
-@background(schedule= Order.reminder)
-def send_reminder(sender_addr, to_addr, msg):        
-        sender_addr = 'stevendeangelo64@gmail.com'
-        to_addr = ['hartyjonny85@gmail.com']
-        msg=MIMEMultipart()
-        msg['From']=sender_addr
-        msg['To']=to_addr
-        msg['Subject']='Your upcoming appointment with the Xamine RIS group'
-        
-        body='This is your scheduled reminder to notify you of your upcoming appointment with the Xamine RIS group'
-            
-        msg.attach(MIMEText(body, 'plain'))
-
-        email='stevendeangelo64@gmail.com'
-        password='Mailing_23'
-
-        mail=smtplib.SMTP('smtp.gmail.com', 587)
-        mail.ehlo()
-        mail.starttls()
-        mail.login(email,password)
-        text=msg.as_string()
-        mail.sendmail(sender_addr,to_addr,text)
-        mail.quit()
-"""
 
 @background(schedule=5)
 def send_notification(order_id):

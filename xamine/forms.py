@@ -44,7 +44,7 @@ class ScheduleForm(forms.ModelForm):
 
     class Meta:
         model = Order
-        fields = ['appointment', 'reminder', 'email_addr']
+        fields = ['appointment', 'reminder']
        
 
         widgets = {
@@ -52,7 +52,6 @@ class ScheduleForm(forms.ModelForm):
                                                 attrs={'placeholder': 'mm/dd/yyyy'}),
             'reminder': DateTimePickerInput(format='%m/%d/%Y %I:%M %p', options={"useCurrent": True},
                                                 attrs={'placeholder': 'mm/dd/yyyy'}),
-            'email_addr': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off'})
         }
 
 
