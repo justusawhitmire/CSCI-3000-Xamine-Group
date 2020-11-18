@@ -383,7 +383,6 @@ def schedule_order(request, order_id):
 
 """ Shows a success page when appointment and reminder are successfully scheduled"""
 """ Sends reminder email(work in progress) """
-<<<<<<< HEAD
 def schedule_success(request):
     context={}
     if request.method == 'POST':
