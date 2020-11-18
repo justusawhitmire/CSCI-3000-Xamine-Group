@@ -52,7 +52,7 @@ class Patient(models.Model):
     notes = models.TextField(null=True, blank=True, max_length=1000)
 
     doctor = models.ForeignKey(User, on_delete=models.DO_NOTHING, null=True)
-    #Get patient email 
+    #get patient email for payment function
     def pat_email(self):
         if self.email_info:
             return f"{self.email_info}"
@@ -99,7 +99,6 @@ class Order(models.Model):
     # Patient Info
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name="orders")
     appointment = models.DateTimeField(null=True, blank=True,)
-    reminder = models.DateTimeField(null=True, blank=True,)
     team = models.ForeignKey(Team, on_delete=models.SET_NULL, null=True, blank=False, related_name='orders')
 
     # Automatically record timestamp info
@@ -131,6 +130,9 @@ class Order(models.Model):
     # Return as string
     def __str__(self):
         return f"#{self.id} - {self.patient.full_name}"
+
+    def get_patient_id(self):
+        return f"{self.patient.id}"
 
 
 def image_path(instance, filename):

@@ -4,10 +4,6 @@ from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
-from django.core.mail import send_mail
-from django.conf import settings
-from django.template.loader import render_to_string
-
 
 from xamine.models import Order, Patient, Image, OrderKey
 from xamine.forms import ImageUploadForm
@@ -15,11 +11,10 @@ from xamine.forms import NewOrderForm, PatientLookupForm
 from xamine.forms import PatientInfoForm, ScheduleForm, TeamSelectionForm, AnalysisForm
 from xamine.utils import is_in_group, get_image_files
 from xamine.tasks import send_notification
-from xamineapp import settings
-<<<<<<< HEAD
-=======
 from .forms import *
->>>>>>> c64fe8451bbc7029d0c9f6dd2be86485fea528c2
+
+#from .forms import ChargeForm
+from django.views.generic.edit import FormView
 
 @login_required
 def index(request):
@@ -121,31 +116,59 @@ def upload_file(request, order_id):
     # Regardless of the result of our post request, reload order page
     return redirect('order', order_id=order_id)
 
-
+from django.core.mail import send_mail
+from django.conf import settings
+"""
+def thanks_view(request):
+    context={}
+    if request.method == "POST":
+        resp_form = ChargeForm(request.POST)
+        if resp_form.is_valid():
+            print(resp_form)
+            print(resp_form.cleaned_data)
+            patient_email = (resp_form.cleaned_data["patient_email"])
+            cost = (resp_form.calcPrice())
+            send_mail(
+                subject = 'Account Balance',
+                message = 'You owe' + ' '+ '$' + str(cost), 
+                from_email = 'thetesttester3@gmail.com',
+                recipient_list = [patient_email],
+                fail_silently= False
+            )
+            #send_mail(subject, message, from_email, recipient_list)
+    return render(request,"thanks.html", context)
+"""
 @login_required
 def order(request, order_id):
+
 
     # Attempt to grab order via order_id from url. 404 if not found.
     try:
         cur_order = Order.objects.get(pk=order_id)
+        pat_id = cur_order.get_patient_id()
+        print(cur_order.modality)
+        pat = Patient.objects.get(pk=pat_id)
+        print(pat.pat_email)
     except Order.DoesNotExist:
         raise Http404
 
     # Check if we have a POST request
     if request.method == 'POST':
-
+        print('request pot')
+        print(cur_order.level_id, request.user)
         # Check if level and permissions for the logged in user are both receptionists or admins
         if cur_order.level_id == 1 and is_in_group(request.user, ['Receptionists', 'Administrators']):
-
+            print('permission tocheck')
             # Assign POST data to selection form, check if it's valid, and save if so
             form = TeamSelectionForm(data=request.POST, instance=cur_order)
+            print(form)
             if form.is_valid():
                 modal = cur_order.modality
                 time = "30"
                 calc = PriceCaculator(modal, time)
                 price = calc.calcPrice()
-                
-                 #send email that shows current account balance 
+
+                #send email that shows current account balance 
                 send_mail(
                 subject = 'Account Balance',
                 message = 'Thank you for your visit! Your account balance is currently:' + ' '+ '$' + str(price) , 
@@ -185,7 +208,7 @@ def order(request, order_id):
                 # Set up data in our form and check validity of data.
                 form = AnalysisForm(data=request.POST, instance=cur_order)
                 if form.is_valid():
-
+                    print("completed")
                     # Save form, then grab saved item
                     form.save()
                     cur_order.refresh_from_db()
@@ -222,6 +245,7 @@ def order(request, order_id):
 
         # If we've made it to there, that means we've successfully submitted the order.
         # Therefore, we'll re-grab it from the DB and increment it's level by one.
+        print(cur_order)
         cur_order.refresh_from_db()
         cur_order.level_id += 1
         cur_order.save()
@@ -294,6 +318,7 @@ def patient(request, pat_id=None):
     }
     return render(request, 'patient.html', context)
 
+
 @login_required
 def schedule_order(request, order_id):
     """ Schedules our appointment if available """
@@ -303,126 +328,41 @@ def schedule_order(request, order_id):
 
         # Grab our requested order from the DB
         order = Order.objects.get(pk=order_id)
-        
+
         # If we have an appointment key in our post data, check if there are appointments within two hours.
         if request.POST['appointment']:
             appt = datetime.datetime.strptime(request.POST['appointment'], '%m/%d/%Y %I:%M %p')
             twohrslater = appt + datetime.timedelta(hours=2)
-            """establishes the current time to be compared for appointments and reminders"""
-            now = datetime.datetime.now()
 
-            
-            """Bug fix below(completed 11/9/20)"""
-            """blocks the ability to schedule an appointment prior to the current time"""
-            if appt < now:
+            if appt.date() < datetime.date.today():
                 messages = {
                     'headline1': 'Appointment is in the past.',
                     'headline2': '',
-                    'headline3': f"Orders can only be assigned later today or in the future."
+                    'headline3': f"Orders can only be assigned to today or in the future."
                 }
                 return show_message(request, messages)
-        
+
             conflict = Order.objects.filter(appointment__gte=appt, appointment__lt=twohrslater).exists()
         else:
             # We did not get an appointment key in our POST data, so we're going to blank out our appt time.
             appt = None
             conflict = False
 
-        """ reminder scheduling method (completed 11/9/20) """
-        if request.POST['reminder']:
-            remnd = datetime.datetime.strptime(request.POST['reminder'], '%m/%d/%Y %I:%M %p')
-            
-            if appt.date() < remnd.date():
-                messages = {
-                    'headline1': 'Reminder is after the appointment.',
-                    'headline2': '',
-                    'headline3': f"Reminders must be scheduled before the appointment."    
-                }
-                return show_message(request, messages)
-
-            if remnd < now:
-                messages = {
-                    'headline1': 'Reminder is in the past.',
-                    'headline2': '',
-                    'headline3': f"Reminder can only be assigned later today or in the future."
-                }
-                return show_message(request, messages)
-            
-            if remnd.date() == appt.date():
-
-                if appt.time() < remnd.time():
-                    messages = {
-                        'headline1': 'Reminder is at the same time or after the appointment.',
-                        'headline2': '',
-                        'headline3': f"Reminders must be scheduled before the appointment."    
-                    }
-                    return show_message(request, messages)
-        else:
-            remnd = None
-            appt = None
-            conflict = None
-
         # If there is a conflict, show an error. Otherwise, save our appt info.
         if conflict:
             messages = {
-                    'headline1': 'Appointment conflict',
-                    'headline2': 'Please try again.',
-                    'headline3': f""
+                'headline1': 'Appointment conflict',
+                'headline2': 'Please try again.',
+                'headline3': f""
             }
             return show_message(request, messages)
         else:
             order.appointment = appt
-            """saves the set time for the reminder"""
-            order.reminder = remnd
             order.save()
-            """displays the success messages once you have successfully scheduled an appointment and a reminder"""
-            return schedule_success(request)
+
     # Alwyas redirect to the order
     return redirect('order', order_id=order_id)
 
-
-""" Shows a success page when appointment and reminder are successfully scheduled"""
-""" Sends reminder email(work in progress) """
-<<<<<<< HEAD
-def schedule_success(request):
-    context={}
-    if request.method == 'POST':
-        #addr = PatientInfoForm.data["email_info"]
-        #pat_email = Patient.objects.filter(email_info=addr)
-        import smtplib
-        
-        s=smtplib.SMTP("smtp.gmail.com", 587)
-        tolist=["stevendeangelo64@gmail.com"]
-        msg = '''
-        From: Xamine RIS group
-        Subject: Upcoming appointment
-        
-        You have an upcoming appointment scheduled with the Xamine RIS group. 
-        
-        Make sure to mark your calendar and we'll see you soon.'''
-        s.starttls()
-        s.login('thetesttester3@gmail.com', 'CSCI3300')
-        s.sendmail("thetesttester3@gmail.com",tolist,msg)
-   
-=======
-def schedule_success(request, pat_id=None):
-    context={}
-    if request.method == 'POST':
-        pat_form = PatientInfoForm(data=request.POST)
-        if pat_form.is_valid():
-            pat_email = (pat_form.cleaned_data["email_info"])
-            send_mail(
-                subject = 'Your upcoming appointment with Xamine group',
-                message = 'You have an upcoming appointment scheduled with the Xamine RIS group.',
-                from_email = 'thetesttester3@gmail.com',
-                recipient_list = [pat_email],
-                fail_silently=False
-            )
-            #send_mail(subject, message, from_email, recipient_list)
->>>>>>> c64fe8451bbc7029d0c9f6dd2be86485fea528c2
-    return render(request, "success_message.html", context)
-    
-    
 
 @login_required
 def patient_lookup(request):
@@ -565,3 +505,4 @@ def public_order(request):
 def show_message(request, headlines):
     """ Handles showing error messages """
     return render(request, 'message.html', headlines)
+

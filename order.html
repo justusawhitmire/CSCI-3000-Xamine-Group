@@ -23,20 +23,17 @@
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Schedule Form</h5>
+                            <h5 class="modal-title" id="exampleModalLabel">Schedule</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
                         <div class="modal-body">
-                            <span class="font-weight-bold">Appointment:</span><br>
                             {{ schedule_form.appointment }}
-                            <span class="font-weight-bold">Reminder:</span><br>
-                            {{ schedule_form.reminder }}
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary">Submit</button>
+                            <button type="submit" class="btn btn-primary">Schedule Appointment</button>
                         </div>
                     </div>
                 </div>
@@ -407,17 +404,23 @@
                         {% endif %}
                     </div>
                 </div>
+                <!--button to send invoice report to the customer-->
                 {% if cur_order.level_id > 3 and request.user|has_group:'Physicians' and request.user == cur_order.patient.doctor %}
                     <div class="row mt-3">
-                        <div class="col-12">
-                             <form method="POST">{%csrf_token%}
+                        <div class="col-12"> 
+                            <form method="POST">{%csrf_token%}
                                 {{cc_form}}
                                 <input type="submit" value="Send Patient Report">
-                             </form>
+                            <!--<button id="patient_send" type="button" onclick="sendPatientEmail()" class="btn btn-outline-primary">-->
+                                <!--Send Report to Patient-->
+                            <!--</button>-->
+                            </form>
                         </div>
                     </div>
                 {% endif %}
             </div>
+                </div>
+            </div>  
         </div>
         <!-- end analysis section -->
     {% endif %}

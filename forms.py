@@ -44,14 +44,11 @@ class ScheduleForm(forms.ModelForm):
 
     class Meta:
         model = Order
-        fields = ['appointment', 'reminder']
-       
+        fields = ['appointment']
 
         widgets = {
-            'appointment': DateTimePickerInput(format='%m/%d/%Y %I:%M %p', options={"useCurrent": True}, 
-                                                attrs={'placeholder': 'mm/dd/yyyy'}),
-            'reminder': DateTimePickerInput(format='%m/%d/%Y %I:%M %p', options={"useCurrent": True},
-                                                attrs={'placeholder': 'mm/dd/yyyy'}),
+            'appointment': DateTimePickerInput(format='%m/%d/%Y %I:%M %p', options={"useCurrent": True},  
+                                               attrs={'placeholder': 'mm/dd/yyyy'})
         }
 
 
@@ -117,8 +114,8 @@ class NewOrderForm(forms.ModelForm):
             'modality': forms.Select(attrs={'class': 'form-control'}),
             'notes': forms.Textarea(attrs={'class': 'form-control', 'autocomplete': 'off', 'rows': '3'}),
         }
-        
-  #add email intry/flat rate cost values the updated way
+
+#add email intry/flat rate cost values the updated way
 
 class PriceCaculator():
     modalList = {"CT Scan": "200", "X-Ray": "300", "MRI": "400"}
@@ -132,3 +129,21 @@ class PriceCaculator():
     
     def calcPrice(self):
         return(int(self.modalList[str(self.mod)]) + int(self.timeList[self.tm]))
+
+"""
+class ChargeForm(forms.Form):
+    '''charge capture form'''
+    patient_email = forms.CharField(label='Enter patient email', max_length=50)
+    modal_type = forms.ChoiceField(label='Please enter modal type',
+    choices=modalList)
+    time_amount = forms.CharField(label='Please enter the amount of time',
+    widget=forms.Select(choices=timeList))
+ 
+    def calcPrice(self):
+        calcPrice : calculate the price
+            returns: Total cost of visit(int)
+        cost = int(self.cleaned_data["modal_type"]) + int(self.cleaned_data ["time_amount"])
+        print(cost)
+        return(cost)
+"""
+        
