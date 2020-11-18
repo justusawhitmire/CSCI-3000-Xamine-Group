@@ -410,9 +410,10 @@
                 {% if cur_order.level_id > 3 and request.user|has_group:'Physicians' and request.user == cur_order.patient.doctor %}
                     <div class="row mt-3">
                         <div class="col-12">
-                            <button id="patient_send" type="button" onclick="sendPatientEmail()" class="btn btn-outline-primary">
-                                Send Report to Patient
-                            </button>
+                             <form method="POST">{%csrf_token%}
+                                {{cc_form}}
+                                <input type="submit" value="Send Patient Report">
+                             </form>
                         </div>
                     </div>
                 {% endif %}
