@@ -403,23 +403,6 @@ def schedule_success(request):
         s.starttls()
         s.login('thetesttester3@gmail.com', 'CSCI3300')
         s.sendmail("thetesttester3@gmail.com",tolist,msg)
-   
-=======
-def schedule_success(request, pat_id=None):
-    context={}
-    if request.method == 'POST':
-        pat_form = PatientInfoForm(data=request.POST)
-        if pat_form.is_valid():
-            pat_email = (pat_form.cleaned_data["email_info"])
-            send_mail(
-                subject = 'Your upcoming appointment with Xamine group',
-                message = 'You have an upcoming appointment scheduled with the Xamine RIS group.',
-                from_email = 'thetesttester3@gmail.com',
-                recipient_list = [pat_email],
-                fail_silently=False
-            )
-            #send_mail(subject, message, from_email, recipient_list)
->>>>>>> c64fe8451bbc7029d0c9f6dd2be86485fea528c2
     return render(request, "success_message.html", context)
     
     
