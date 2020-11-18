@@ -4,9 +4,10 @@ from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
-from django.core.mail import EmailMessage
+from django.core.mail import send_mail
 from django.conf import settings
 from django.template.loader import render_to_string
+
 
 from xamine.models import Order, Patient, Image, OrderKey
 from xamine.forms import ImageUploadForm
@@ -14,7 +15,7 @@ from xamine.forms import NewOrderForm, PatientLookupForm
 from xamine.forms import PatientInfoForm, ScheduleForm, TeamSelectionForm, AnalysisForm
 from xamine.utils import is_in_group, get_image_files
 from xamine.tasks import send_notification
-
+from xamineapp import settings
 
 @login_required
 def index(request):
@@ -285,7 +286,7 @@ def schedule_order(request, order_id):
 
         # Grab our requested order from the DB
         order = Order.objects.get(pk=order_id)
-
+        
         # If we have an appointment key in our post data, check if there are appointments within two hours.
         if request.POST['appointment']:
             appt = datetime.datetime.strptime(request.POST['appointment'], '%m/%d/%Y %I:%M %p')
@@ -339,7 +340,6 @@ def schedule_order(request, order_id):
                         'headline3': f"Reminders must be scheduled before the appointment."    
                     }
                     return show_message(request, messages)
-            
         else:
             remnd = None
             appt = None
@@ -359,28 +359,37 @@ def schedule_order(request, order_id):
             order.reminder = remnd
             order.save()
             """displays the success messages once you have successfully scheduled an appointment and a reminder"""
-            messages = {
-                'headline1': 'Success',
-                'headline2': 'Your Appointment and Reminder have been scheduled',
-                'headline3': f""
-            }   
-            return show_message(request, messages)
-
-    """ if remnd == now:
-            patient_name = Patient.first_name
-            patient_email = Patient.email_info
-            template = render_to_string('base/Email_template.html', {'name': patient_name})
-            EmailMessage(
-                'Your upcoming appointment with the RIS group',
-                template,
-                settings.EMAIL_HOST_USER,
-                [patient_email]
-                )   
-            EmailMessage.send  """ 
-
-
+            return schedule_success(request)
     # Alwyas redirect to the order
     return redirect('order', order_id=order_id)
+
+
+""" Shows a success page when appointment and reminder are successfully scheduled"""
+""" Sends reminder email(work in progress) """
+def schedule_success(request):
+    context={}
+    if request.method == 'POST':
+        pat_form = PatientInfoForm(request.POST)
+        if pat_form.is_valid():
+            print(pat_form)
+            print(pat_form.cleaned_data)
+            pat_email = (pat_form.cleaned_data["email_info"])
+            send_mail(
+                subject = 'Your upcoming appointment with Xamine group',
+                message = 'You have an upcoming appointment scheduled with the Xamine RIS group.',
+                from_email = 'thetesttester3@gmail.com',
+                recipient_list = [pat_email],
+                fail_silently=False
+            )
+            #send_mail(subject, message, from_email, recipient_list)
+    return render(request, "success_message.html", context)
+    
+    
+    
+    
+
+
+   
 
 
 @login_required
