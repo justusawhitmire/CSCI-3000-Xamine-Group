@@ -117,3 +117,18 @@ class NewOrderForm(forms.ModelForm):
             'modality': forms.Select(attrs={'class': 'form-control'}),
             'notes': forms.Textarea(attrs={'class': 'form-control', 'autocomplete': 'off', 'rows': '3'}),
         }
+        
+  #add email intry/flat rate cost values the updated way
+
+class PriceCaculator():
+    modalList = {"CT Scan": "200", "X-Ray": "300", "MRI": "400"}
+    timeList = {"30": "100", "60": "150", "120": "200"}
+    mod = None
+    tm = None
+    def __init__(self, modal, time):
+        
+        self.mod = modal
+        self.tm = time
+    
+    def calcPrice(self):
+        return(int(self.modalList[str(self.mod)]) + int(self.timeList[self.tm]))
