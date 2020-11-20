@@ -1,0 +1,17 @@
+Quick start guide/refrences - SJB - CSCI 3300 - Team 5 
+
+1. To run and test the code, you first need to utilize a virtual enviorment to host the website localy on your machine. 
+Refrence (installing virtual enviorment): https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/
+Refrence(running virtual enviorment): https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/#activating-a-virtual-environment
+
+
+2. To ensure the code is able to run correctly, install all the requriments listied in the reqirments.txt file. 
+to do so use: 'pip install -r reqirments.txt' in your terminal
+
+3. If you are woriking with a team, make sure to use Git/Github to ensure source control.
+Refrence (Github guide): https://www.w3schools.com/whatis/whatis_github.asp
+Refrence (Github website): https://github.com/
+
+4. To make sure you are as efficent as possible with your work, make sure to read over the documentation for Django to have a solid idea of how everything works
+Refrence: https://docs.djangoproject.com/en/3.1/
+
