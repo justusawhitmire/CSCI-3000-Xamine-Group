@@ -1,3 +1,6 @@
+
+Quick start guide/refrences - SJB - CSCI 3300 - Team 5 
+
 Shelby (SJB) Payment System:
 
 forms.py: Line 123-134
