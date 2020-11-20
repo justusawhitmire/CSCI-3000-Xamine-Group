@@ -14,12 +14,9 @@ from xamine.forms import ImageUploadForm
 from xamine.forms import NewOrderForm, PatientLookupForm
 from xamine.forms import PatientInfoForm, ScheduleForm, TeamSelectionForm, AnalysisForm
 from xamine.utils import is_in_group, get_image_files
-from xamine.tasks import send_notification
+from xamine.tasks import send_notification, schedule_success
 from xamineapp import settings
-<<<<<<< HEAD
-=======
 from .forms import *
->>>>>>> c64fe8451bbc7029d0c9f6dd2be86485fea528c2
 
 @login_required
 def index(request):
@@ -144,13 +141,14 @@ def order(request, order_id):
                 time = "30"
                 calc = PriceCaculator(modal, time)
                 price = calc.calcPrice()
-                
+                #fixed patient email issue (11/20/20)
+                pat_email = cur_order.patient.email_info
                  #send email that shows current account balance 
                 send_mail(
                 subject = 'Account Balance',
                 message = 'Thank you for your visit! Your account balance is currently:' + ' '+ '$' + str(price) , 
                 from_email = 'thetesttester3@gmail.com',
-                recipient_list = ["theshelby3@gmail.com"],
+                recipient_list = [pat_email],
                 fail_silently= False
                 )
                 form.save()
@@ -375,36 +373,13 @@ def schedule_order(request, order_id):
             """saves the set time for the reminder"""
             order.reminder = remnd
             order.save()
+            """calls the email method in tasks.py and sends the order with all of its objects, sets reminder email to be sent"""
+            schedule_success(order_id=order.pk, schedule=order.reminder)
             """displays the success messages once you have successfully scheduled an appointment and a reminder"""
-            return schedule_success(request)
+            return render(request, "success_message.html")
     # Alwyas redirect to the order
     return redirect('order', order_id=order_id)
 
-
-""" Shows a success page when appointment and reminder are successfully scheduled"""
-""" Sends reminder email(work in progress) """
-def schedule_success(request):
-    context={}
-    if request.method == 'POST':
-        #addr = PatientInfoForm.data["email_info"]
-        #pat_email = Patient.objects.filter(email_info=addr)
-        import smtplib
-        
-        s=smtplib.SMTP("smtp.gmail.com", 587)
-        tolist=["stevendeangelo64@gmail.com"]
-        msg = '''
-        From: Xamine RIS group
-        Subject: Upcoming appointment
-        
-        You have an upcoming appointment scheduled with the Xamine RIS group. 
-        
-        Make sure to mark your calendar and we'll see you soon.'''
-        s.starttls()
-        s.login('thetesttester3@gmail.com', 'CSCI3300')
-        s.sendmail("thetesttester3@gmail.com",tolist,msg)
-    return render(request, "success_message.html", context)
-    
-    
 
 @login_required
 def patient_lookup(request):

@@ -11,6 +11,7 @@ import smtplib
 from background_task import background
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from datetime import datetime, timedelta
 
 
 
@@ -77,3 +78,29 @@ def send_notification(order_id):
     body += f"<br><br><a href='{url}' target='_blank'>Click Here to View</a>"
 
     send_email(list(recipients), sender, subject, body)
+
+"""handles the sending of the reminder email to the patient(11/20/2020)"""
+"""runs automatically once reminder is scheduled"""
+
+@background(schedule=None)
+def schedule_success(order_id):
+    order = Order.objects.get(pk=order_id)
+    
+    
+    pat_email = order.patient.email_info
+    appt_time = order.appointment - timedelta(hours=5)
+    import smtplib
+        
+    s=smtplib.SMTP("smtp.gmail.com", 587)
+    tolist=[pat_email]
+    msg = f'''
+    From: Xamine RIS group
+    Subject: Upcoming appointment
+    
+    You have an upcoming appointment scheduled on {order.appointment.strftime("%A")} {order.appointment.strftime("%m/%d/%Y")} at {appt_time.strftime("%I:%M %p")} with the Xamine RIS group. 
+        
+    Make sure to mark your calendar and we'll see you soon.'''
+    s.starttls()
+    s.login('thetesttester3@gmail.com', 'CSCI3300')
+    s.sendmail("thetesttester3@gmail.com",tolist,msg)
+    
