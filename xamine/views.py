@@ -17,6 +17,7 @@ from xamine.utils import is_in_group, get_image_files
 from xamine.tasks import send_notification, schedule_success
 from xamineapp import settings
 from .forms import *
+from .models import Patient
 
 @login_required
 def index(request):
@@ -142,13 +143,12 @@ def order(request, order_id):
                 calc = PriceCaculator(modal, time)
                 price = calc.calcPrice()
                 #fixed patient email issue (11/20/20)
-                pat_email = cur_order.patient.email_info
                  #send email that shows current account balance 
                 send_mail(
                 subject = 'Account Balance',
                 message = 'Thank you for your visit! Your account balance is currently:' + ' '+ '$' + str(price) , 
                 from_email = 'thetesttester3@gmail.com',
-                recipient_list = [pat_email],
+                recipient_list = [cur_order.patient.email_info],
                 fail_silently= False
                 )
                 form.save()
@@ -212,7 +212,7 @@ def order(request, order_id):
         else:
             # Show invalid request error
             messages = {
-                'headline1': 'Order already complete.',
+                'headline1': 'Order complete.',
                 'headline2': '',
                 'headline3': '',
             }

@@ -41,7 +41,7 @@ def send_notification(order_id):
 
     # Grab correct order via order_id and set our from address
     ord = Order.objects.get(pk=order_id)
-    sender = 'xamineinc@gmail.com'
+    sender = 'thetesttester3@gmail.com'
 
     # If level is 1, send to the receptionists
     if ord.level_id == 1:

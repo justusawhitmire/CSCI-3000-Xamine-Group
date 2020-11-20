@@ -121,7 +121,7 @@ class NewOrderForm(forms.ModelForm):
   #add email intry/flat rate cost values the updated way
 
 class PriceCaculator():
-    modalList = {"CT Scan": "200", "X-Ray": "300", "MRI": "400"}
+    modalList = {"CAT Scan": "200", "X-Ray": "300", "MRI": "400"}
     timeList = {"30": "100", "60": "150", "120": "200"}
     mod = None
     tm = None
