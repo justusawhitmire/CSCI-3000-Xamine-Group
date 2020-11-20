@@ -1,0 +1,29 @@
+Test-Cases - SJB - CSCI 3300 - Team 5
+
+Shelby, Payment Functionality, Final product, 11/20/20: 
+---TEST ONE---
+Test Scenario:Invalid email is entered 
+Test Case: Test to see what happens when a invalid email is entered and submit is pressed 
+Test Steps: 1. launch website, 2. Create new order/patient, 3. enter patient email in patient info  
+Test Data: email = 1234 
+Expected Results: Email is declined as invalid  
+Actual Results: Email was declined
+
+---TEST TWO---
+Test Scenario: No modality type is chosen for the patient
+Test Case: Test to see what happens when a modality type is not selected for the patient, and the submit button is filled out 
+Test Steps: 1. launch website, 2. Create new order/patient, 3. select modality type (in this case, don't pick one)  
+Test Data: email = ----
+Expected Results: submit is declined as no modality is selected   
+Actual Results: submit was declined
+
+---TEST THREE---
+Test Scenario: see if invoice email is sent when correct information for a patient is submitted 
+Test Case: Test if invoice email is sent correctly 
+Test Steps: 1. launch website, 2. Create new order/patient, 3. select modality type, finalize imaging, submit report, send invoice 
+Test Data: email: Theshelby3@gmail.com, modality: MRI
+Expected Results: invoice is recived for $500
+Actual Results: $500 dollar invoice was recived
+
+
+
