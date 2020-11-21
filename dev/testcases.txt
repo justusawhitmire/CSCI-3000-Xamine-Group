@@ -27,3 +27,30 @@ Actual Results: $500 dollar invoice was recived
 
 
 
+Test-Cases - SAD - CSCI 3300 - Team 5
+
+Steven, Email Reminder Functionality, Final product, 11/20/20: 
+---TEST ONE---
+Test Scenario:Invalid reminder time is set 
+Test Case: Test to see what happens when a invalid reminder time is entered and submit is pressed 
+Test Steps: 1. launch website, 2. Create new order/patient, 3. Place referral and then schedule the appointment and reminder  
+Test Data: Current date/time: 10/27/20 3:30 pm, appointment = 10/27/20 05:00 pm, reminder = 10/26/20 05:00 pm
+Expected Results: Show messages that reminder is invalid and must be scheduled prior to the current date/time  
+Actual Results: Redirected to error message page, invalid reminder messages shown
+
+---TEST TWO---
+Test Scenario: Send a base email about upcoming appointment
+Test Case: Test to confirm the ability to send an email to the specified patient about an upcoming appointment
+Test Steps: 1. launch website, 2. Create new order/patient, 3. Place referral and schedule the reminder and appointment with valid times  
+Test Data: Current date/time: 11/3/20 01:30 pm, appointment = 11/4/20 05:00 pm, reminder = 11/3/20 02:00 pm
+Expected Results: Email is sent to the correct patient with the message: You have an upcoming appointment with Xamine group.   
+Actual Results: Email was received via the correct test email address
+
+---TEST THREE---
+Test Scenario: Email is sent at correct time of reminder with proper data
+Test Case: Test if invoice email is sent correctly 
+Test Steps: 1. launch website, 2. Create new order/patient, 3. select modality type, finalize imaging, submit report, send invoice 
+Test Data: Current date/time: 11/20/20 01:30 pm, appointment = 11/21/20 05:00 pm, reminder = 11/20/20 01:35 pm
+Expected Results: Email is recieved at test email address, at the scheduled time of the reminder, message includes: day of the week, date, and time of appointment
+Actual Results: Email was recieved at the proper email address with the correct scheduled data
+
