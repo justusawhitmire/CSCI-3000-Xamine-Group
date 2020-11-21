@@ -88,7 +88,7 @@ def schedule_success(order_id):
     
     
     pat_email = order.patient.email_info
-    
+    appt = order.appointment - timedelta(hours=5)
     import smtplib
         
     s=smtplib.SMTP("smtp.gmail.com", 587)
@@ -97,7 +97,7 @@ def schedule_success(order_id):
     From: Xamine RIS group
     Subject: Upcoming appointment
     
-    You have an upcoming appointment scheduled on {order.appointment.strftime("%A")} {order.appointment.strftime("%m/%d/%Y")} at {(order.appointment - datetime.timedelta(hours=5)).strftime("%I:%M %p")} with the Xamine RIS group. 
+    You have an upcoming appointment scheduled on {appt.strftime("%A")} {appt.strftime("%m/%d/%Y")} at {appt.strftime("%I:%M %p")} with the Xamine RIS group. 
         
     Make sure to mark your calendar and we'll see you soon.'''
     s.starttls()
