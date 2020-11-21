@@ -11,9 +11,9 @@ New Code - SAD - CSCI 3300 - Team 5
 
 Steven (SAD) Email Reminder System:
 
-forms.py:
+forms.py: Lines 47, 53, and 54
 views.py: Line 302-321, Line 329-361, Line 373-379
-models.py:
+models.py: Line 99
 tasks.py: Line 82-105
-order.html:
-success_message.html:
+order.html: Lines 26, 34, 35, and 39
+success_message.html: Line 1-21
