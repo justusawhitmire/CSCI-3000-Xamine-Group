@@ -1,17 +1,23 @@
-Quick start guide/refrences - SJB - CSCI 3300 - Team 5 
+Quick start guide/references - SJB - CSCI 3300 - Team 5 
 
 1. To run and test the code, you first need to utilize a virtual enviorment to host the website localy on your machine. 
 Refrence (installing virtual enviorment): https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/
 Refrence(running virtual enviorment): https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/#activating-a-virtual-environment
 
 
-2. To ensure the code is able to run correctly, install all the requriments listied in the reqirments.txt file. 
-to do so use: 'pip install -r reqirments.txt' in your terminal
+2. To ensure the code is able to run correctly, install all the requirements listed in the requirements.txt file. 
+to do so use: 'pip install -r requirements.txt' in your terminal. Once you have done this, use these commands to finish setting up the project: 
+python manage.py migrate, python manage.py createsuperuser, and once you've created your super user, python manage.py runserver
 
 3. If you are working with a team, make sure to use Git/Github to ensure source control.
-Refrence (Github guide): https://www.w3schools.com/whatis/whatis_github.asp
-Refrence (Github website): https://github.com/
+Reference (Github guide): https://www.w3schools.com/whatis/whatis_github.asp
+Reference (Github website): https://github.com/
 
 4. To make sure you are as efficent as possible with your work, make sure to read over the documentation for Django to have a solid idea of how everything works
 Refrence: https://docs.djangoproject.com/en/3.1/
+
+5. For the email reminder function to work properly, open a second console window after you use the python manage.py runserver command. In this second console you 
+will need to use the command: python manage.py process_tasks; this command will activate the emailing portion of the function and ensure the reminder function is 
+fully operational
+
 
