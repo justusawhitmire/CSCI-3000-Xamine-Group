@@ -10,6 +10,6 @@ Result: Receptionists must now schedule the appointment and reminder for a time 
 ---Email Reminder Defect---
 
 Issue: Reminder email containing scheduled time for patient was printing a time that was 5 hours after the actual appointment
-Resolution: Changed call for appointment time in tasks.py from: order.appointment.strftime("%I:%M %p") 
-                                                          to: (order.appointment - datetime.timedelta(hours=5)).strftime("%I:%M %p")
-Result: Email displays the exact scheduled time of the appointment
+Resolution: Created a fixed time variable in tasks.py on line 91: appt = order.appointment - timedelta(hours=5), updated the calls for appointment data in message
+            of reminder data: original=order.appointment.strftime("%A") updated=appt.strftime("%A")
+Result: Email displays the exact scheduled day, date, and time of the appointment
