@@ -48,8 +48,16 @@ Actual Results: Email was received via the correct test email address
 
 ---TEST THREE---
 Test Scenario: Email is sent at correct time of reminder with proper data
-Test Case: Test if invoice email is sent correctly 
-Test Steps: 1. launch website, 2. Create new order/patient, 3. select modality type, finalize imaging, submit report, send invoice 
+Test Case: Test if reminder email is sent correctly 
+Test Steps: 1. launch website, 2. Create new order/patient, 3. Place referral and schedule the reminder and appointment with valid times, 4. Check test email
+Test Data: Current date/time: 11/16/20 01:30 pm, appointment = 11/17/20 08:00 pm, reminder = 11/16/20 01:35 pm
+Expected Results: Email is recieved at test email address, at the scheduled time of the reminder, message includes: day of the week, date, and time of appointment
+Actual Results: Email was recieved at the proper email address and at the proper time, however the email contained incorrect appointment data
+
+---TEST FOUR---
+Test Scenario: Email is sent at correct time of reminder with proper data
+Test Case: Test if reminder email is sent correctly 
+Test Steps: 1. launch website, 2. Create new order/patient, 3. Place referral and schedule the reminder and appointment with valid times, 4. Check test email
 Test Data: Current date/time: 11/20/20 01:30 pm, appointment = 11/21/20 05:00 pm, reminder = 11/20/20 01:35 pm
 Expected Results: Email is recieved at test email address, at the scheduled time of the reminder, message includes: day of the week, date, and time of appointment
 Actual Results: Email was recieved at the proper email address with the correct scheduled data
