@@ -54,9 +54,4 @@ Test Data: Current date/time: 11/20/20 01:30 pm, appointment = 11/21/20 05:00 pm
 Expected Results: Email is recieved at test email address, at the scheduled time of the reminder, message includes: day of the week, date, and time of appointment
 Actual Results: Email was recieved at the proper email address with the correct scheduled data
 
----Email Reminder Defect---
-Issue: Reminder email containing scheduled time for patient was printing a time that was 5 hours after the actual appointment
-Resolution: Changed call for appointment time in tasks.py from: order.appointment.strftime("%I:%M %p") 
-                                                          to: (order.appointment - datetime.timedelta(hours=5)).strftime("%I:%M %p")
-Result: Email displays the exact scheduled time of the appointment
-                                                          
+  
