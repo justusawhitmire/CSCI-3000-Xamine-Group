@@ -1,2 +1,15 @@
 ---Appointment Scheduling Defect--
 
+Issue: Receptionists able to schedule an appointment at a time that had already past if the date was set to the current date,
+       EX: Current Time: 11/20/20 03:15 pm, Appointment time: 11/20/20 02:15 pm, Still able to schedule even though the appointment time has passed
+Resolution: Added a now variable to schedule branch in views.py using  now = datetime.datetime.now() that establishes the current time, created if branch that
+            compares the appointment time to now variable and returns an error message if appointment time is set earlier than current time
+Result: Receptionists must now schedule the appointment and reminder for a time in the future, otherwise they receive an error message and have to reschedule the 
+        appointment
+
+---Email Reminder Defect---
+
+Issue: Reminder email containing scheduled time for patient was printing a time that was 5 hours after the actual appointment
+Resolution: Changed call for appointment time in tasks.py from: order.appointment.strftime("%I:%M %p") 
+                                                          to: (order.appointment - datetime.timedelta(hours=5)).strftime("%I:%M %p")
+Result: Email displays the exact scheduled time of the appointment
