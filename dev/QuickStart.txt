@@ -8,7 +8,7 @@ Refrence(running virtual enviorment): https://packaging.python.org/guides/instal
 2. To ensure the code is able to run correctly, install all the requriments listied in the reqirments.txt file. 
 to do so use: 'pip install -r reqirments.txt' in your terminal
 
-3. If you are woriking with a team, make sure to use Git/Github to ensure source control.
+3. If you are working with a team, make sure to use Git/Github to ensure source control.
 Refrence (Github guide): https://www.w3schools.com/whatis/whatis_github.asp
 Refrence (Github website): https://github.com/
 
